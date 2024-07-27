@@ -1,3 +1,6 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
-pub fn main() !void {}
+pub fn main() !void {
+    // Bare bones start
+}
