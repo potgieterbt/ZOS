@@ -1,4 +1,18 @@
 const std = @import("std");
+const log = std.log.scoped(.builder);
+const builtin = @import("builtin");
+const rt = @import("test/runtime_test.zig");
+const RuntimeStep = rt.RuntimeStep;
+const Allocator = std.mem.Allocator;
+const Builder = std.build.Builder;
+const Step = std.build.Step;
+const Target = std.Target;
+const CrossTarget = std.zig.CrossTarget;
+const fs = std.fs;
+const File = fs.File;
+const Mode = std.builtin.Mode;
+const TestMode = rt.TestMode;
+const ArrayList = std.ArrayList;
 
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
@@ -8,7 +22,12 @@ pub fn build(b: *std.Build) void {
     // what target to build for. Here we do not override the defaults, which
     // means any target is allowed, and the default is native. Other options
     // for restricting supported target set are available.
-    const target = b.standardTargetOptions(.{});
+    const x86_i686 = CrossTarget{
+        .cpu_arch = .i386,
+        .os_tag = .freestanding,
+        .cpu_model = .{ .explicit = &Target.x86.cpu._i686 },
+    };
+    const target = b.standardTargetOptions(.{ .whitelist = &[_]CrossTarget{x86_i686}, .default_target = x86_i686 });
 
     // Standard optimization options allow the person running `zig build` to select
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
